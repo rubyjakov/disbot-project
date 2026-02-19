@@ -1,0 +1,34 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+
+      - name: Build Docker Image
+        run: docker build -t disbot-image .
+
+
+      - name: Run Tests
+        run: |
+        
+         
+          echo "Running tests..."
+         
+          python3 -m py_compile disbot.py 
+
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        run: railway upsert --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAIL_WAY_TOKEN }}
